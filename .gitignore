@@ -7,4 +7,5 @@
 /spec/reports/
 /tmp/
 .idea
-ebay_browse_api*.gem
+*.gem
+Gemfile.lock
