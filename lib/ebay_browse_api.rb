@@ -37,6 +37,7 @@ module EbayBrowseApi
     end
 
     @get_access_token_url = 'https://api.ebay.com/identity/v1/oauth2/token'
+
     @search_url = 'https://api.ebay.com/buy/browse/v1/item_summary/search'
 
 
@@ -60,6 +61,7 @@ module EbayBrowseApi
       @get_access_token_json = nil
       @search_resp = nil
       @search_json = nil
+      check_ebay_credentials
     end
 
     def clear_search_params
@@ -123,6 +125,19 @@ module EbayBrowseApi
       }
       @search_resp = Typhoeus::Request.get(EbayBrowseApiClient.search_url, @search_options)
       @search_json = EbayBrowseApiClient.parse_json(@search_resp.response_body)
+    end
+
+    private
+    def check_ebay_credentials
+      vars = [:ru_name, :client_id, :secret_id, :ebay_marketplace_id]
+      errors = []
+      vars.each do |var_name|
+        var_value = instance_variable_get(:"@#{var_name}")
+        errors << var_name if var_value.nil? || var_value.to_s.empty?
+      end
+      unless errors.empty?
+        raise EbayBrowseApi::Error.new("Please populate: #{errors}")
+      end
     end
   end
 end
